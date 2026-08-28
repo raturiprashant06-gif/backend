@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import axios from 'axios'
+const App = () => {
 
-function App() {
-  const [count, setCount] = useState(0)
+ const {register,handleSubmit}= useForm()
+
+
+   const submitHandler = async (data)=>{
+   console.log(data)
+    const formData = new FormData()
+   
+      formData.append("name",data.name)
+      formData.append("email",data.email)
+  
+  
+      for(let i =0;i<data.images.length;i++ ){
+    formData.append("images",data.images[i])
+      }
+
+     await axios.post('http://localhost:3000/user/create',formData,{
+        withCredentials:true
+     })
+   
+   }
+
+  
+
+
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <form onSubmit={handleSubmit(submitHandler)}>
+        <input {...register('name')} type="text" placeholder='Enter your name' />
+        <br />
+        <input {...register('email')} type="email" placeholder='Enter your email' />
+        <br />
+        <input {...register('images')} multi type="file" placeholder='upload your profile pic' />
+        <br />
+      <input type="submit" />
+      </form>
+    </div>
   )
 }
 
